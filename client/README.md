@@ -33,3 +33,6 @@ VITE_GROQ_API_KEY=your_key_here
 ## 📅 Built Day by Day
 
 This project is being built progressively — one feature per day.
+
+## 🌐 Live Demo
+👉 https://flashcard-app-rust-five.vercel.app/
