@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 function Browse() {
   const [cards, setCards] = useState([])
   const [flipped, setFlipped] = useState({})
+  const [search, setSearch] = useState("")
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -15,14 +16,17 @@ function Browse() {
     setFlipped((prev) => ({ ...prev, [index]: !prev[index] }))
   }
 
+  const filtered = cards.filter(card =>
+    card.q.toLowerCase().includes(search.toLowerCase()) ||
+    card.a.toLowerCase().includes(search.toLowerCase())
+  )
+
   if (!cards.length) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center text-center">
         <p className="text-gray-400 mb-4">No cards yet! Generate some first.</p>
-        <button
-          onClick={() => navigate("/generate")}
-          className="bg-gray-800 text-white px-6 py-2 rounded-xl hover:bg-gray-700 transition"
-        >
+        <button onClick={() => navigate("/generate")}
+          className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition-all duration-300">
           Generate Cards
         </button>
       </div>
@@ -30,42 +34,53 @@ function Browse() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10">
+    <div className="min-h-screen px-6 py-10">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Your Deck</h1>
-            <p className="text-gray-400 mt-1">{cards.length} cards — tap any card to flip</p>
+            <h1 className="text-3xl font-bold text-white">Your Deck</h1>
+            <p className="text-gray-400 mt-1">{cards.length} cards — tap any to flip</p>
           </div>
-          <button
-            onClick={() => navigate("/generate")}
-            className="bg-gray-800 text-white px-5 py-2 rounded-xl text-sm hover:bg-gray-700 transition"
-          >
+          <button onClick={() => navigate("/generate")}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-5 py-2.5 rounded-2xl text-sm font-semibold hover:scale-105 transition-all duration-300 shadow-lg shadow-purple-500/30">
             + New Deck
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              onClick={() => toggleFlip(index)}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 cursor-pointer hover:shadow-md transition min-h-36 flex flex-col justify-between"
-            >
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="🔍 Search cards..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 mb-8 transition-all duration-200"
+        />
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((card, index) => (
+            <div key={index} onClick={() => toggleFlip(index)}
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 cursor-pointer hover:bg-white/15 hover:scale-105 transition-all duration-300 min-h-36 flex flex-col justify-between group">
               <div>
-                <p className="text-xs text-gray-300 uppercase tracking-widest mb-2">
+                <span className={`text-xs uppercase tracking-widest font-medium ${flipped[index] ? "text-blue-400" : "text-purple-400"}`}>
                   {flipped[index] ? "Answer" : "Question"}
-                </p>
-                <p className={`text-sm font-medium leading-relaxed ${flipped[index] ? "text-gray-500" : "text-gray-800"}`}>
+                </span>
+                <p className={`text-sm font-medium leading-relaxed mt-2 ${flipped[index] ? "text-gray-300" : "text-white"}`}>
                   {flipped[index] ? card.a : card.q}
                 </p>
               </div>
-              <p className="text-xs text-gray-200 mt-4 text-right">
+              <p className="text-xs text-gray-600 mt-4 text-right group-hover:text-gray-400 transition-colors">
                 {flipped[index] ? "tap to see question" : "tap to see answer"}
               </p>
             </div>
           ))}
         </div>
+
+        {filtered.length === 0 && (
+          <p className="text-center text-gray-500 mt-10">No cards match your search.</p>
+        )}
       </div>
     </div>
   )
