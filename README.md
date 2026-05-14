@@ -11,7 +11,7 @@ An AI-powered flashcard generator that helps you study smarter. Paste your notes
 - **AI Card Generation** — Paste notes or type a topic, get flashcards instantly using Groq AI (Llama 3.3)
 - **Study Mode** — Flip cards one by one, mark as "Got it" or "Still learning", track progress
 - **Browse Mode** — View all cards in a grid, search by keyword, flip to see answers
-- **User Authentication** — Register and login with JWT-based auth
+- **User Authentication** — Register and login with JWT-based authentication
 - **Persistent Storage** — Decks saved to MongoDB, accessible from any device
 - **Beautiful UI** — Purple & blue glassmorphism design with smooth animations
 
@@ -48,7 +48,7 @@ An AI-powered flashcard generator that helps you study smarter. Paste your notes
 | Generate | Paste notes → AI generates cards |
 | Study | Flip cards, track progress |
 | Browse | Grid view, search, deck switcher |
-| Login/Register | JWT auth |
+| Login/Register | JWT authentication |
 
 ---
 
@@ -83,20 +83,6 @@ PORT=5000
 
 ---
 
-## 📁 Project Structure
-flashcard-app/
-├── client/                 # React frontend
-│   └── src/
-│       ├── pages/          # Home, Generate, Study, Browse, Login, Register
-│       ├── components/     # Navbar
-│       └── api/            # API helper functions
-├── server/                 # Node.js backend
-│   ├── routes/             # auth.js, decks.js
-│   ├── models/             # User.js, Deck.js
-│   └── middleware/         # auth.js
-└── README.md
-
----
 
 ## 🌐 Deployment
 
