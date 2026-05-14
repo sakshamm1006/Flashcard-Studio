@@ -13,10 +13,11 @@ function Navbar() {
   ]
 
   function handleLogout() {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    navigate("/")
-  }
+  localStorage.removeItem("token")
+  localStorage.removeItem("user")
+  localStorage.removeItem("flashcards")
+  navigate("/")
+}
 
   return (
     <nav className="w-full fixed top-0 z-50 px-6 py-4">
