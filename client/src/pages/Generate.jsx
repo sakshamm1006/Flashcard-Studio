@@ -1,12 +1,15 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { saveDeck } from "../api/api"
+import { saveDeck, uploadPDF } from "../api/api"
 
 function Generate() {
   const [notes, setNotes] = useState("")
   const [cardCount, setCardCount] = useState(8)
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState("")
+  const [pdfFile, setPdfFile] = useState(null)
+  const [pdfLoading, setPdfLoading] = useState(false)
+  const [pdfName, setPdfName] = useState("")
   const navigate = useNavigate()
 
   async function handleGenerate() {
@@ -17,6 +20,8 @@ function Generate() {
 
     setLoading(true)
     setStatus("AI is generating your flashcards...")
+    const trimmedNotes = notes.length > 3000 ? notes.substring(0, 3000) + "..." : notes
+
 
     const prompt = `You are a flashcard creator. Generate exactly ${cardCount} high-quality study flashcards from the following notes/topic.
 
@@ -38,7 +43,7 @@ Make questions clear and specific. Answers should be 1-3 sentences.`
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
           messages: [{ role: "user", content: prompt }],
-          max_tokens: 1000,
+          max_tokens: 2000,
         }),
       })
 
@@ -47,25 +52,47 @@ Make questions clear and specific. Answers should be 1-3 sentences.`
       const clean = text.replace(/```json|```/g, "").trim()
       const cards = JSON.parse(clean)
 
-     localStorage.setItem("flashcards", JSON.stringify(cards))
+      localStorage.setItem("flashcards", JSON.stringify(cards))
 
-// Save to MongoDB if logged in
-const token = localStorage.getItem("token")
-if (token) {
-  try {
-    await saveDeck(notes, cards)
-  } catch (e) {
-    console.log("Could not save deck to DB")
-  }
-}
+      const token = localStorage.getItem("token")
+      if (token) {
+        try {
+          await saveDeck(notes, cards)
+        } catch (e) {
+          console.log("Could not save deck to DB")
+        }
+      }
 
-setStatus(`${cards.length} cards created!`)
-setLoading(false)
-navigate("/study")
+      setStatus(`${cards.length} cards created!`)
+      setLoading(false)
+      navigate("/study")
     } catch (e) {
       setStatus("Something went wrong. Try again.")
       setLoading(false)
     }
+  }
+
+  async function handlePDFUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setPdfName(file.name)
+    setPdfLoading(true)
+    setStatus("Extracting text from PDF...")
+
+    try {
+      const data = await uploadPDF(file)
+      if (data.text) {
+        setNotes(data.text)
+        setStatus(`✅ PDF extracted! ${data.pages} pages → ready to generate cards`)
+      } else {
+        setStatus("Could not extract text from PDF. Try another file.")
+      }
+    } catch (err) {
+      setStatus("PDF upload failed. Make sure backend is running.")
+    }
+
+    setPdfLoading(false)
   }
 
   return (
@@ -75,11 +102,32 @@ navigate("/study")
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Generate Flashcards</h1>
-          <p className="text-gray-400">Paste your notes or just type a topic</p>
+          <p className="text-gray-400">Paste your notes, upload a PDF, or just type a topic</p>
         </div>
 
         {/* Card */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
+
+          {/* PDF Upload */}
+          <div className="mb-4">
+            <label className="flex items-center gap-3 bg-white/5 border border-white/10 border-dashed rounded-2xl px-5 py-4 cursor-pointer hover:bg-white/10 transition-all duration-200">
+              <span className="text-2xl">📄</span>
+              <div>
+                <p className="text-sm text-white font-medium">
+                  {pdfLoading ? "Extracting..." : pdfName ? pdfName : "Upload PDF"}
+                </p>
+                <p className="text-xs text-gray-500">Click to upload a PDF and auto-fill notes</p>
+              </div>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handlePDFUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Textarea */}
           <textarea
             className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm resize-none focus:outline-none focus:border-purple-500/50 placeholder-gray-500 mb-6 transition-all duration-200"
             rows={6}
@@ -104,23 +152,23 @@ Or just type a topic like: French Revolution"
 
             <button
               onClick={handleGenerate}
-              disabled={loading}
+              disabled={loading || pdfLoading}
               className="ml-auto bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-2xl font-semibold hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 disabled:opacity-40 disabled:scale-100"
             >
               {loading ? (
-  <span className="flex items-center gap-2">
-    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-    </svg>
-    Generating...
-  </span>
-) : "✨ Generate Cards"}
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  Generating...
+                </span>
+              ) : "✨ Generate Cards"}
             </button>
           </div>
 
           {status && (
-            <p className={`text-sm mt-4 ${status.includes("created") ? "text-green-400" : "text-gray-400"}`}>
+            <p className={`text-sm mt-4 ${status.includes("created") || status.includes("✅") ? "text-green-400" : "text-gray-400"}`}>
               {status}
             </p>
           )}
@@ -129,4 +177,5 @@ Or just type a topic like: French Revolution"
     </div>
   )
 }
+
 export default Generate
