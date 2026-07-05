@@ -5,6 +5,7 @@ require("dotenv").config()
 
 const authRoutes = require("./routes/auth")
 const deckRoutes = require("./routes/decks")
+const uploadRoutes = require("./routes/upload")
 
 const app = express()
 
@@ -13,6 +14,7 @@ app.use(express.json())
 
 app.use("/auth", authRoutes)
 app.use("/decks", deckRoutes)
+app.use("/upload", uploadRoutes)
 
 app.get("/", (req, res) => {
   res.json({ message: "Flashcard API is running!" })

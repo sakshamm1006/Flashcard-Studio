@@ -38,3 +38,15 @@ export async function deleteDeck(id) {
   })
   return res.json()
 }
+
+export async function uploadPDF(file) {
+  const formData = new FormData()
+  formData.append("pdf", file)
+
+  const res = await fetch(`${BASE_URL}/upload`, {
+    method: "POST",
+    body: formData
+    // No Content-Type header — browser sets it automatically with boundary
+  })
+  return res.json()
+}
