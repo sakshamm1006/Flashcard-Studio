@@ -25,18 +25,6 @@ An AI-powered flashcard generator that transforms your notes, textbooks, and PDF
 
 ## 📸 Screenshots
 
-> **📌 How to add screenshots:**
-> 1. Create a folder called `screenshots` in your root project folder
-> 2. Take screenshots of each page and save them with these exact names:
->    - `screenshots/banner.png` → Full app banner (use the home page, crop nicely)
->    - `screenshots/home.png` → Home page
->    - `screenshots/generate.png` → Generate page with PDF upload
->    - `screenshots/study.png` → Study mode with a card flipped
->    - `screenshots/browse.png` → Browse page showing card grid
->    - `screenshots/login.png` → Login page
->    - `screenshots/quiz.png` → Quiz mode (add later when built)
->    - `screenshots/dashboard.png` → Progress dashboard (add later when built)
-> 3. Use **Windows Snipping Tool** or press `Win + Shift + S` to take screenshots
 
 | Home Page | Generate Page |
 |---|---|
@@ -54,10 +42,6 @@ An AI-powered flashcard generator that transforms your notes, textbooks, and PDF
 
 ## 🏗️ System Architecture
 
-> **📌 How to add architecture diagram:**
-> 1. Generate the architecture diagram using the AI prompt (ask me for it)
-> 2. Save it as `screenshots/architecture.png`
-> 3. It will automatically show here
 
 ![Architecture Diagram](screenshots/architecture.png)
 
