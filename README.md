@@ -437,7 +437,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ### ⭐ If you found this project useful, please give it a star!
 
-**Built with 💜 by [Saksham Trivedi](https://www.linkedin.com/in/sakshammtrivedi) & [Utkarsh Sharma]([https://www.linkedin.com/in/sakshammtrivedi](https://www.linkedin.com/in/utkarsh-sharma-79209b267/)**
+**Built with 💜 by [Saksham Trivedi](https://www.linkedin.com/in/sakshammtrivedi) & [Utkarsh Sharma](https://www.linkedin.com/in/utkarsh-sharma-79209b267/)**
 
 *From zero to deployed full stack AI app — built day by day*
 
